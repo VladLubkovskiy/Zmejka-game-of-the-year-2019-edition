@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace ConsoleApp1
 {
@@ -24,18 +25,15 @@ namespace ConsoleApp1
             _SnakeY = random.Next(1, _h);
         }
         Random random = new Random();
+
         public void DrawFruit()
         {
             Console.SetCursorPosition(_FruitX, _FruitY);
-            Console.Write("$");
+            Console.Write("@");
         }
         public void DrawSnake()
         {
             Console.SetCursorPosition(_SnakeX, _SnakeY);
-            Console.Write("z");
-            Console.Write("z");
-            Console.Write("z");
-            Console.Write("z");
             Console.Write("z");
         }
         public void DrawFeild()
@@ -55,17 +53,78 @@ namespace ConsoleApp1
                 Console.Write("#");
             }
         }
+
+        public void SnakeLeft()
+        {
+                if (_SnakeX == 1)
+                {
+
+                }
+                else
+                {
+                    Console.SetCursorPosition(_SnakeX, _SnakeY);
+                    Console.Write(" ");
+                    _SnakeX -= 1;
+                    DrawSnake();
+                }
+     
+        }
+        public void SnakeRight()
+        {
+            if (_SnakeX == _w - 2)
+            {
+
+            }
+            else
+            {
+                Console.SetCursorPosition(_SnakeX, _SnakeY);
+                Console.Write(" ");
+                _SnakeX += 1;
+                DrawSnake();
+            }
+        }
+        public void SnakeUp()
+        {
+            if (_SnakeY == 1)
+            {
+
+            }
+            else
+            {
+                Console.SetCursorPosition(_SnakeX, _SnakeY);
+                Console.Write(" ");
+                _SnakeY -= 1;
+                DrawSnake();
+            }
+        }
+        public void SnakeDown()
+        {
+
+            if (_SnakeY == _h - 1)
+            {
+
+            }
+            else
+            {
+                Console.SetCursorPosition(_SnakeX, _SnakeY);
+                Console.Write(" ");
+                _SnakeY += 1;
+                DrawSnake();
+            }
+        }
     }
     class Program 
     {
         static void Main(string[] args)
         {
             int w, h;
+            string move;
             w = 40;
             h = 30/2;
             ConsoleKeyInfo key = new ConsoleKeyInfo();
             Game game = new Game(w,h);
-            while (true) { 
+            while (true)
+            {
                 Console.Clear();
                 game.DrawFeild();
                 game.DrawFruit();
@@ -75,18 +134,28 @@ namespace ConsoleApp1
                 {
                     case ConsoleKey.UpArrow:
                         Console.WriteLine("Up");
+                        game.SnakeUp();
+                        move = "Up";
                         break;
                     case ConsoleKey.LeftArrow:
                         Console.WriteLine("Left");
+                        game.SnakeLeft();
+                        move = "Left";
                         break;
                     case ConsoleKey.RightArrow:
                         Console.WriteLine("Right");
+                        game.SnakeRight();
+                        move = "Right";
                         break;
                     case ConsoleKey.DownArrow:
                         Console.WriteLine("Down");
+                        game.SnakeDown();
+                        move = "Down";
                         break;
                 }
-                key = Console.ReadKey();
+                if (Console.KeyAvailable )
+                    key = Console.ReadKey();
+                System.Threading.Thread.Sleep(200);                
             }
         }
     }
