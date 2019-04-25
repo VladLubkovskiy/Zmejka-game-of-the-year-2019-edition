@@ -99,7 +99,6 @@ namespace ConsoleApp1
         }
         public void SnakeDown()
         {
-
             if (_SnakeY == _h - 1)
             {
 
@@ -112,18 +111,21 @@ namespace ConsoleApp1
                 DrawSnake();
             }
         }
+        public bool FruitEated()
+        {
+            return _SnakeX == _FruitX && _SnakeY == _FruitY;
+        }
     }
     class Program 
     {
         static void Main(string[] args)
         {
             int w, h;
-            string move;
             w = 40;
             h = 30/2;
             ConsoleKeyInfo key = new ConsoleKeyInfo();
             Game game = new Game(w,h);
-            while (true)
+            while (!game.FruitEated())
             {
                 Console.Clear();
                 game.DrawFeild();
@@ -133,29 +135,22 @@ namespace ConsoleApp1
                 switch (key.Key)
                 {
                     case ConsoleKey.UpArrow:
-                        Console.WriteLine("Up");
                         game.SnakeUp();
-                        move = "Up";
                         break;
                     case ConsoleKey.LeftArrow:
-                        Console.WriteLine("Left");
                         game.SnakeLeft();
-                        move = "Left";
                         break;
                     case ConsoleKey.RightArrow:
-                        Console.WriteLine("Right");
                         game.SnakeRight();
-                        move = "Right";
                         break;
-                    case ConsoleKey.DownArrow:
-                        Console.WriteLine("Down");
+                    case ConsoleKey.DownArrow:                        
                         game.SnakeDown();
-                        move = "Down";
                         break;
                 }
-                if (Console.KeyAvailable )
+                System.Threading.Thread.Sleep(100);
+                while (Console.KeyAvailable )
                     key = Console.ReadKey();
-                System.Threading.Thread.Sleep(200);                
+                game.FruitEated();
             }
         }
     }
