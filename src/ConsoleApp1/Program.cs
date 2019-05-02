@@ -111,6 +111,11 @@ namespace ConsoleApp1
                 DrawSnake();
             }
         }
+        public void NewFruit()
+        {
+            _FruitX = random.Next(1, _w - 1);
+            _FruitY = random.Next(1, _h);
+        }
         public bool FruitEated()
         {
             return _SnakeX == _FruitX && _SnakeY == _FruitY;
@@ -120,6 +125,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
+            int score = 0;
             int w, h;
             w = 40;
             h = 30/2;
@@ -132,6 +138,7 @@ namespace ConsoleApp1
                 game.DrawFruit();
                 game.DrawSnake();
                 Console.SetCursorPosition(0, h + 1);
+                Console.Write("Score: " + score);
                 switch (key.Key)
                 {
                     case ConsoleKey.UpArrow:
@@ -150,7 +157,11 @@ namespace ConsoleApp1
                 System.Threading.Thread.Sleep(100);
                 while (Console.KeyAvailable )
                     key = Console.ReadKey();
-                game.FruitEated();
+                if (game.FruitEated())
+                {
+                    game.NewFruit();
+                    score++;
+                }
             }
         }
     }
