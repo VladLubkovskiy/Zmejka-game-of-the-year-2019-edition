@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 
 namespace ConsoleApp1
-{
-    
+{  
     class Snake
     {
         public Random random = new Random();
@@ -22,7 +21,7 @@ namespace ConsoleApp1
             _SnakeX = random.Next(1, _w - 1);
             _SnakeY = random.Next(1, _h);
         }
-        public void DrawSnake()
+        public void Draw()
         {
             Console.SetCursorPosition(_SnakeX, _SnakeY);
             Console.Write("z");
@@ -34,7 +33,7 @@ namespace ConsoleApp1
                 Console.SetCursorPosition(_SnakeX, _SnakeY);
                 Console.Write(" ");
                 _SnakeX -= 1;
-                DrawSnake();
+                Draw();
             }
         }
         public void SnakeRight()
@@ -44,7 +43,7 @@ namespace ConsoleApp1
                 Console.SetCursorPosition(_SnakeX, _SnakeY);
                 Console.Write(" ");
                 _SnakeX += 1;
-                DrawSnake();
+                Draw();
             }
         }
         public void SnakeUp()
@@ -54,7 +53,7 @@ namespace ConsoleApp1
                 Console.SetCursorPosition(_SnakeX, _SnakeY);
                 Console.Write(" ");
                 _SnakeY -= 1;
-                DrawSnake();
+                Draw();
             }
         }
         public void SnakeDown()
@@ -64,59 +63,96 @@ namespace ConsoleApp1
                 Console.SetCursorPosition(_SnakeX, _SnakeY);
                 Console.Write(" ");
                 _SnakeY += 1;
-                DrawSnake();
+                Draw();
+            }
+        }
+        public int GetSnakeX()
+        {
+            return _SnakeX;
+        }
+        public int GetSnakeY()
+        {
+            return _SnakeY;
+        }
+    }
+    class Fruit
+    {
+        public Random random = new Random();
+        Snake _snake;
+        int _FruitX;
+        int _FruitY;
+        public Fruit(int w, int h)
+        {
+            _FruitX = random.Next(1, w - 1);
+            _FruitY = random.Next(1, h);
+            _snake = new Snake(w, h);
+        }
+        public void Draw()
+        {
+            Console.SetCursorPosition(_FruitX, _FruitY);
+            Console.Write("@");
+        }
+        public void NewFruit(int w, int h)
+        {
+            _FruitX = random.Next(1, w - 1);
+            _FruitY = random.Next(1, h);
+        }
+        public bool IsFruitEated(int _SnakeX, int _SnakeY)
+        {
+            return _SnakeX == _FruitX && _SnakeY == _FruitY;
+        }
+        public int GetFruitX()
+        {
+            return _FruitX;
+        }
+        public int GetFruitY()
+        {
+            return _FruitY;
+        }
+    }
+    class Field
+    {
+        public void Draw(int w, int h)
+        {
+            for (int i = 0; i < w; i++)
+            {
+                Console.SetCursorPosition(i, 0);
+                Console.Write("#");
+                Console.SetCursorPosition(i, h);
+                Console.Write("#");
+            }
+            for (int c = 1; c < h; c++)
+            {
+                Console.SetCursorPosition(0, c);
+                Console.Write("#");
+                Console.SetCursorPosition(w - 1, c);
+                Console.Write("#");
             }
         }
     }
     class Game
     {       
         public Random random = new Random();
-        int _SnakeX;
-        int _SnakeY;
-        int _FruitX;
-        int _FruitY;
+        Field _field;
+        Snake _snake;
+        Fruit _fruit;
+        ConsoleKeyInfo _key;
         int _w;
         int _h;
-        int _score = 0;
+        int _score = -1;
         public Game(int w, int h)
         {
             _w = w;
-            _h =h;
-            _FruitX = random.Next(1, _w - 1); 
-            _FruitY = random.Next(1, _h);
-            Snake snake = new Snake(_w, _h);
-        }       
-        public void DrawFruit()
-        {
-            Console.SetCursorPosition(_FruitX, _FruitY);
-            Console.Write("@");
+            _h =h;           
+            _snake = new Snake(w, h);
+            _fruit = new Fruit(w, h);
+            _field = new Field();
         }
-        
-        public void DrawFeild()
+        public void DrawGame()
         {
-            for (int i = 0; i < _w; i++)
-            {
-                Console.SetCursorPosition(i, 0);
-                Console.Write("#");
-                Console.SetCursorPosition(i, _h);
-                Console.Write("#");
-            }
-            for (int c = 1; c < _h; c++)
-            {
-                Console.SetCursorPosition(0, c);
-                Console.Write("#");
-                Console.SetCursorPosition(_w - 1, c);
-                Console.Write("#");
-            }
-        }       
-        public void NewFruit()
-        {
-            _FruitX = random.Next(1, _w - 1);
-            _FruitY = random.Next(1, _h);
-        }
-        public bool IsFruitEated()
-        {
-            return _SnakeX == _FruitX && _SnakeY == _FruitY;
+            _field.Draw(_w, _h);
+            _fruit.Draw();
+            _snake.Draw();
         }
         public int GetScore()
         {
@@ -124,11 +160,37 @@ namespace ConsoleApp1
         }
         public void IncreaseScore()
         {
-            _score++;
+            if (_fruit.IsFruitEated(_snake.GetSnakeX(), _snake.GetSnakeY()))
+            {
+                _fruit.NewFruit(_w, _h);
+                _score++;
+            }
         }
         public bool IsGameEnded()
         {
-            return _score  == 20;
+            return _score == 20;
+        }
+        public void GetKey(ConsoleKeyInfo key)
+        {
+            _key = key;
+        }
+        public void Update()
+        {
+            switch (_key.Key)
+            {
+                case ConsoleKey.UpArrow:
+                    _snake.SnakeUp();
+                    break;
+                case ConsoleKey.LeftArrow:
+                    _snake.SnakeLeft();
+                    break;
+                case ConsoleKey.RightArrow:
+                    _snake.SnakeRight();
+                    break;
+                case ConsoleKey.DownArrow:
+                    _snake.SnakeDown();
+                    break;
+            }
         }
     }
     class Program 
@@ -143,34 +205,17 @@ namespace ConsoleApp1
             while (!game.IsGameEnded())
             {
                 Console.Clear();
-                game.DrawFeild();
-                game.DrawFruit();
-                game.DrawSnake();
+                game.DrawGame();
                 Console.SetCursorPosition(0, h + 1);
                 Console.Write("Score: " + game.GetScore());
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        game.SnakeUp();
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        game.SnakeLeft();
-                        break;
-                    case ConsoleKey.RightArrow:
-                        game.SnakeRight();
-                        break;
-                    case ConsoleKey.DownArrow:                        
-                        game.SnakeDown();
-                        break;
-                }
+                game.Update();
                 System.Threading.Thread.Sleep(100);
-                while (Console.KeyAvailable )
-                    key = Console.ReadKey();
-                if (game.IsFruitEated())
+                while (Console.KeyAvailable)
                 {
-                    game.NewFruit();
-                    game.IncreaseScore();
+                    key = Console.ReadKey();
+                    game.GetKey(key);
                 }
+                game.IncreaseScore();
             }
         }
     }
