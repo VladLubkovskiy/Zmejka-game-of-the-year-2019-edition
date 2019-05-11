@@ -10,16 +10,12 @@ namespace ConsoleApp1
     class Snake
     {
         public Random random = new Random();
-        int _w;
-        int _h;
         int _SnakeX;
         int _SnakeY;
         public Snake(int w, int h)
         {
-            _w = w;
-            _h = h;
-            _SnakeX = random.Next(1, _w - 1);
-            _SnakeY = random.Next(1, _h);
+            _SnakeX = random.Next(1, w - 1);
+            _SnakeY = random.Next(1, h);
         }
         public void Draw()
         {
@@ -38,7 +34,7 @@ namespace ConsoleApp1
         }
         public void SnakeRight()
         {
-            if (!(_SnakeX == _w - 2))
+            if (!(_SnakeX == w - 2))
             {
                 Console.SetCursorPosition(_SnakeX, _SnakeY);
                 Console.Write(" ");
@@ -58,7 +54,7 @@ namespace ConsoleApp1
         }
         public void SnakeDown()
         {
-            if (!(_SnakeY == _h - 1))
+            if (!(_SnakeY == h - 1))
             {
                 Console.SetCursorPosition(_SnakeX, _SnakeY);
                 Console.Write(" ");
@@ -158,7 +154,7 @@ namespace ConsoleApp1
         {
             return _score;
         }
-        public void IncreaseScore()
+        public void IncreaseScoreAndAddNewFruit()
         {
             if (_fruit.IsFruitEated(_snake.GetSnakeX(), _snake.GetSnakeY()))
             {
@@ -174,7 +170,7 @@ namespace ConsoleApp1
         {
             _key = key;
         }
-        public void Update()
+        public void Move()
         {
             switch (_key.Key)
             {
@@ -208,14 +204,14 @@ namespace ConsoleApp1
                 game.DrawGame();
                 Console.SetCursorPosition(0, h + 1);
                 Console.Write("Score: " + game.GetScore());
-                game.Update();
+                game.Move();
                 System.Threading.Thread.Sleep(100);
                 while (Console.KeyAvailable)
                 {
                     key = Console.ReadKey();
                     game.GetKey(key);
                 }
-                game.IncreaseScore();
+                game.IncreaseScoreAndAddNewFruit();
             }
         }
     }
